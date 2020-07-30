@@ -1,0 +1,10 @@
+1. make a folder named '--all'
+-> mkdir -- --all
+
+2. from titanic.csv, check how many female/male there are.
+template: [tail -n (1) titanic.csv | cut -d(2) -f(3) | (4) | uniq (5)
+-> tail -n +2 titanic.csv| cut -d"," -f6 | sort | uniq -c
+
+3. from titanic.csv, check how many people with first name 'Brown' exist.
+template: [cat titanic.csv | grep (1) | wc (2)
+-> cat titanic.csv | grep 'Brown,' | wc -l 
