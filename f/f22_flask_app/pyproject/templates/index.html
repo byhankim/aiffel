@@ -1,0 +1,56 @@
+<html>
+
+<head>
+    <title>전처리 페이지 UI</title>
+</head>
+
+<body>
+
+    <form action="/get_selected_table" method="POST" enctype="multipart/form-data">
+        <input type="text" name="table_name" placeholder="테이블 명" required="required" />
+        <button type="submit">선택</button>
+        {% if label %}
+            <span>
+                {{ label }}
+            </span>
+        {% endif %}
+
+    </form>
+
+    <form action="/get_column_name_change" method="POST" enctype="multipart/form-data">
+        <h1>컬럼 이름 변경</h1>
+            <input type="text" name="before_column_name" placeholder="변경 전 컬럼명" required="required" />
+            <input type="text" name="after_column_name" placeholder="변경 후 컬럼명"required="required" />
+        <br>
+        <br>
+        <button type="submit">변경</button>
+    </form>
+
+    <form action="/get_image_pre_status" method="POST" enctype="multipart/form-data">
+        <h1>이미지 전처리 종류 선택</h1>
+        <input type="checkbox" name="pre_toggle_0">
+        <span>180도 회전 </span>
+
+        <input type="checkbox" name="pre_toggle_1">
+        <span>흑백 변경 </span>
+
+        <input type="checkbox" name="pre_toggle_2">
+        <span">이미지 사이즈 변경 </span>
+        <br>
+        <button type="submit">변경</button>
+    </form>
+
+
+    <form action="/upload_image" method="POST" enctype="multipart/form-data">
+        <h1>이미지 업로드 하기</h1>
+        <input type="file" name="uploaded_image">
+        <button>이미지 업로드</button>
+        {% if label %}
+            <span>
+                {{ label }}
+            </span>
+        {% endif %}
+    </form>
+</body>
+
+</html>

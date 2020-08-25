@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="/home/aiffel/aiffel/f/f20_sql_to_db/sqlite/mydb.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="668"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,6:mainstocks"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1">SELECT 이름, COUNT(이름) AS 대출건수
+FROM 도서대출내역
+GROUP BY 이름;
+
+SELECT * FROM 도서대출내역;
+
+SELECT * FROM 도서대출내역2;
+
+SELECT *, SUBSTR(대출일수, 1, (length(대출일수)-1)) AS 대출일수_수정 
+FROM 도서대출내역2;
+
+SELECT *, CAST(SUBSTR(대출일수, 1, (length(대출일수)-1)) AS INT) AS 대출일수_수정 
+FROM 도서대출내역2 ;
+
+SELECT ID, 이름, 대출년월
+, AVG(CAST(SUBSTR(대출일수, 1, (length(대출일수)-1)) AS INT)) AS 대출일수_평균 
+FROM 도서대출내역2 
+GROUP BY 1,2,3;
+
+SELECT * FROM 도서대출내역
+WHERE 반납일 IS NULL;
+
+
+SELECT 이름 FROM 도서대출내역
+WHERE ID &lt;= 102 AND 이름 LIKE &quot;%태&quot;
+AND 대출일 &gt;= &quot;2020-06-19&quot; AND 반납일 IS NOT NULL;
+
+
+SELECT A.*, B.도서명 
+FROM 대출내역 AS A 
+INNER JOIN 도서명 AS B
+ON A.도서ID = B.도서ID;
+
+SELECT A.*, B.도서명 
+FROM 대출내역 AS A 
+LEFT JOIN 도서명 AS B
+ON A.도서ID = B.도서ID;
+
+
+SELECT A.*, IFNULL(B.도서명, '도서명미상') AS 도서명
+    FROM 대출내역 AS A 
+    LEFT JOIN 도서명 AS B
+    ON A.도서ID = B.도서ID;
+
+SELECT A.*,
+	   CASE B.도서명
+			WHEN B.도서명 IS NOT NULL THEN B.도서명
+			ELSE '도서명미상'
+	   END 도서명
+	FROM 대출내역 AS A
+	LEFT JOIN 도서명 AS B
+	ON A.도서ID = B.도서ID;
+
+	
+	
+SELECT * FROM 도서대출내역;
+
+
+
+SELECT 도서ID, 도서명, COUNT(대출일) AS 대출건수,
+CASE
+WHEN 대출일 IS NOT NULL AND (반납일 IS NULL)
+THEN '대출중'
+WHEN (대출일 IS NOT NULL) AND (반납일 IS NOT NULL)
+THEN '보관중' ELSE '보관중'END AS 대출상태
+FROM(
+SELECT A.*, B.ID, B.이름, B.대출일, B.반납일
+FROM 도서명 AS A
+LEFT JOIN 도서대출내역 AS B
+ON A.도서ID = B.도서ID
+) C
+GROUP BY 도서ID;
+
+
+SELECT C.도서ID, C.도서명, SUM(C.대출건수) AS 대출건수, 
+ CASE SUM(C.대출건수)-SUM(C.반납건수) WHEN 0 THEN '보관중' ELSE '대출중' END AS 대출상태
+FROM (
+    SELECT A.도서ID, A.도서명, 
+     CASE WHEN B.대출일 IS NULL THEN 0 ELSE 1 END AS 대출건수,
+     CASE WHEN B.반납일 IS NULL THEN 0 ELSE 1 END AS 반납건수
+    FROM 도서명 AS A 
+    LEFT JOIN 도서대출내역 AS B
+    ON A.도서ID = B.도서ID ) AS C
+GROUP BY C.도서ID, C.도서명 ;
+
+
+SELECT C.도서ID, C.도서명, SUM(C.대출건수) AS 대출건수, 
+ CASE SUM(C.대출건수)-SUM(C.반납건수) WHEN 0 THEN '보관중' ELSE '대출중' END AS 대출상태
+FROM (
+    SELECT A.도서ID, A.도서명, 
+     CASE WHEN B.대출일 IS NULL THEN 0 ELSE 1 END AS 대출건수,
+     CASE WHEN B.반납일 IS NULL THEN 0 ELSE 1 END AS 반납건수
+    FROM 도서명 AS A 
+    LEFT JOIN 도서대출내역 AS B
+    ON A.도서ID = B.도서ID ) AS C
+GROUP BY C.도서ID, C.도서명 ;</sql><current_tab id="0"/></tab_sql></sqlb_project>

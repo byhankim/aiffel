@@ -1,0 +1,31 @@
+<html>
+
+<head>
+    <title>이미지 전처리 프로젝트 페이지</title>
+</head>
+
+    <body>
+
+        <form action="/image_preprocess" method="POST" enctype="multipart/form-data">
+            <h1>이미지 업로드 하기</h1>
+            <input type="file" name="uploaded_image">
+
+            <h1>이미지 전처리</h1>
+            이미지 그레이스케일, 리사이징을 시작합니다. <br>
+
+
+            {% if label %}
+                <span>
+                    결과 저장 경로 :
+                </span>
+            <br>
+                <span>
+                    {{ label }}
+                </span>
+            <br>
+            <br>
+            {% endif %}
+            <button type="submit">실행</button>
+        </form>
+    </body>
+</html>
