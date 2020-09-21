@@ -1,0 +1,88 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1">
+    <title>Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.1"></script>
+  </head>
+  <body>
+    <video playsinline autoplay></video>
+    <button>Take snapshot</button>
+    <canvas></canvas>
+    <span></span>
+    <script>
+      video = document.querySelector('video');
+      canvas = document.querySelector('canvas');
+      button = document.querySelector('button');
+      canvas.width = 48;
+      canvas.height = 48;
+      canvas.style.filter = 'grayscale(1)';
+      video.style.transform = 'scaleX(-1)';
+
+      span = document.querySelector('span');
+      span.style.fontSize = '48px';
+
+
+      const LABELS = {
+        0: '🤬', // angry
+        1: '🤢', // disgust
+        2: '😱', // fear
+        3: '😄', // happy
+        4: '😢', // sad
+        5: '😲', // surprise
+        6: '😐' // neutral
+      }
+      
+      function classifyCallback(predictions) {
+        alert(predictions[0].className + ':' + predictions[0].probabaility);
+      }
+
+      async function predict() {
+        const model = await tf.loadLayersModel('./model/model.json');
+
+        image = tf.browser.fromPixels(canvas);
+        console.log(image);
+        image = image.toFloat().mean(2).mul(1/255.0).reshape([-1, 48, 48, 1]);
+        logits = model.predict(image);
+        const results = await logits.softmax().data();
+        i = results.indexOf(Math.max(...results));
+
+        image.dispose();
+        logits.dispose();
+        console.log(results);
+        
+        span.innerHTML = LABELS[i];
+      }
+
+      button.onclick = function() {
+        w = video.videoWidth;
+        h = video.videoHeight;
+        s = Math.min(w, h);
+        sx = (w-s)/2;
+        sy = (h-s)/2;
+
+        canvas.getContext('2d').drawImage(video, sx=sx, sy=sy, swidth=s,
+          sheight=s, x=0, y=0, width=48, height=48);
+
+        span.innerHTML = '⌛';
+        predict();
+    };
+
+
+    constraints = {
+      audio: false,
+      video: true
+    };
+
+    function handleSuccess(stream) {
+      video.srcObject = stream;
+    }
+
+    function handleError(error) {
+      alert('navigator.MediaDevices.getUserMedia error: ' + error.message + error.name);
+    }
+
+    navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess).catch(handleError);
+</script>
+  </body>
+</html>
